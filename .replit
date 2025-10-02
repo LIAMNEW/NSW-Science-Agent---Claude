@@ -12,6 +12,7 @@ modules = ["pyright-extended:v1-20230707-0c33b22", "gcloud:v1-20230815-e6e4431",
 # Specifies which nix channel to use when building the environment.
 [nix]
 channel = "stable-22_11"
+packages = ["gdb"]
 
 [env]
 
@@ -30,3 +31,35 @@ run = ["sh", "-c", "python3 main.py"]
 
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Server"
+
+[[workflows.workflow]]
+name = "Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 36935
+externalPort = 3000

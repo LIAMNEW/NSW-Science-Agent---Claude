@@ -11,6 +11,8 @@ Flask = "^2.2.0"
 urllib3 = "^1.26.12"
 poetry = "1.1.13"
 xds-protos = "^0.0.11"
+python-docx = "^1.2.0"
+google-cloud-aiplatform = "^1.118.0"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

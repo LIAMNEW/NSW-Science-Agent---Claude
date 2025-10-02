@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Science Learning Buddy - AI Learning Companion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 NSW Science Learning Buddy</h1>
+            <p class="subtitle">Your AI Companion for Stage 4 Science (Years 7-8)</p>
+        </header>
+
+        <div class="main-content">
+            <div class="info-panel">
+                <h2>What can I help you with today?</h2>
+                <div class="topic-buttons">
+                    <button class="topic-btn" onclick="selectTopic('Forces')">Forces & Motion</button>
+                    <button class="topic-btn" onclick="selectTopic('Cells')">Cells & Life</button>
+                    <button class="topic-btn" onclick="selectTopic('Rock Cycle')">Rocks & Minerals</button>
+                    <button class="topic-btn" onclick="selectTopic('Energy')">Energy</button>
+                    <button class="topic-btn" onclick="selectTopic('Solutions')">Solutions & Mixtures</button>
+                    <button class="topic-btn" onclick="selectTopic('Space')">Astronomy & Space</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div id="chatMessages" class="chat-messages">
+                    <div class="message agent-message">
+                        <strong>Learning Buddy:</strong>
+                        <p>Hi there! I'm your NSW Science Learning Buddy. I'm here to help you explore and understand Year 7-8 science topics. Ask me anything about forces, cells, energy, rocks, space, or any other science topic you're curious about!</p>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <select id="queryType" class="query-type-select">
+                        <option value="learn">Learn Topic</option>
+                        <option value="quiz">Take a Quiz</option>
+                        <option value="help">Get Help</option>
+                    </select>
+                    <input type="text" id="queryInput" placeholder="Ask me about a science topic..." />
+                    <button id="sendBtn" onclick="sendQuery()">Send</button>
+                </div>
+            </div>
+
+            <div class="features-panel">
+                <h3>Learning Features</h3>
+                <ul>
+                    <li><strong>Curriculum Aligned:</strong> All content matches NESA Stage 4 outcomes</li>
+                    <li><strong>Working Scientifically:</strong> Develop inquiry and investigation skills</li>
+                    <li><strong>Interactive Learning:</strong> Get personalized lessons and explanations</li>
+                    <li><strong>Practice Quizzes:</strong> Test your knowledge with custom assessments</li>
+                    <li><strong>Real-World Connections:</strong> See how science applies to careers and life</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
