@@ -43,6 +43,13 @@ Current implementation provides:
 - NESA outcome detection and resource matching
 
 ## Recent Changes
+- **October 10, 2025 (Latest)**: Interactive Quiz System
+  - Built interactive quiz interface with answer selection before reveal
+  - Added automatic scoring for multiple choice questions (shows X/10 and percentage)
+  - Implemented expected answer display for short answer (no scoring, self-assessment)
+  - Visual feedback: green for correct, red for incorrect answers
+  - Complete quiz flow: MC quiz → Score → SA quiz
+  
 - **October 10, 2025**: Enhanced resource integration
   - Integrated comprehensive resource catalog (50+ resources)
   - Added YouTube video embedding and interactive simulations
