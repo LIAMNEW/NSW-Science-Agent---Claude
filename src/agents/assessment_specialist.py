@@ -38,22 +38,51 @@ Always provide specific, actionable feedback that helps students improve."""
             return {'error': 'Unknown assessment action'}
     
     def create_quiz(self, topic: str, num_questions: int = 5) -> Dict[str, Any]:
-        prompt = f"""Create a {num_questions}-question quiz for Year 7-8 students on: {topic}
+        # Generate 10 multiple choice questions
+        mc_prompt = f"""Create 10 multiple choice questions for Year 7-8 students on: {topic}
 
-Requirements:
-1. Include a mix of multiple choice, short answer, and application questions
-2. Questions should test both knowledge recall and conceptual understanding
-3. Include at least one question about scientific inquiry or experimental design
-4. Make questions engaging and relevant to students' lives
-5. Provide the correct answers with brief explanations
+Requirements for EACH question:
+1. Test different aspects of {topic} (concepts, applications, experiments, real-world connections)
+2. Include 4 options (A, B, C, D) with only ONE correct answer
+3. Make distractors plausible but clearly incorrect
+4. Vary difficulty from basic recall to higher-order thinking
+5. Relate to NSW Stage 4 Science curriculum outcomes
 
-Format each question clearly with question number, type, and answer."""
+Format:
+Q1. [Question text]
+A) [Option]
+B) [Option]
+C) [Option]
+D) [Option]
+Answer: [Letter] - [Brief explanation]
+
+Provide all 10 questions."""
         
-        quiz_content = self.generate_response(prompt)
+        mc_questions = self.generate_response(mc_prompt)
+        
+        # Generate 10 short answer questions
+        sa_prompt = f"""Create 10 short answer questions for Year 7-8 students on: {topic}
+
+Requirements for EACH question:
+1. Require 2-4 sentence responses
+2. Test understanding, not just recall
+3. Include: definitions, explanations, comparisons, applications, and scientific inquiry
+4. Vary difficulty levels
+5. Align with NSW Working Scientifically skills
+
+Format:
+Q1. [Question requiring short written response]
+Expected Answer: [Key points for full credit]
+
+Provide all 10 questions."""
+        
+        sa_questions = self.generate_response(sa_prompt)
         
         return {
             'agent': self.agent_name,
-            'quiz_content': quiz_content,
+            'multiple_choice_questions': mc_questions,
+            'short_answer_questions': sa_questions,
+            'quiz_summary': f"20 total questions generated for {topic}:\n- 10 Multiple Choice\n- 10 Short Answer",
             'topic': topic,
             'next_action': 'present_quiz_to_student'
         }
@@ -86,20 +115,114 @@ Be supportive and focus on learning, not just correctness."""
         }
     
     def get_fallback_response(self, prompt: str) -> str:
-        if 'quiz' in prompt.lower():
-            return """Quiz Questions:
+        if 'Create 10 multiple choice' in prompt:
+            # Extract topic from prompt
+            import re
+            topic_match = re.search(r'on: (.+?)\n', prompt)
+            topic = topic_match.group(1) if topic_match else "this topic"
+            
+            return f"""Q1. What is the primary characteristic of {topic}?
+A) It only occurs in laboratories
+B) It involves observable phenomena and measurable properties
+C) It requires expensive equipment
+D) It only applies to living things
+Answer: B - Science involves studying observable, measurable phenomena
 
-1. Multiple Choice: What is the main function of cells in living organisms?
-   a) To provide structure only
-   b) To carry out life processes
-   c) To make organisms colorful
-   d) To fill space
-   Answer: b) Cells carry out all life processes
+Q2. In {topic}, which scientific method is most commonly used?
+A) Guessing randomly
+B) Asking opinions
+C) Systematic observation and experimentation
+D) Reading social media
+Answer: C - Scientific method requires systematic investigation
 
-2. Short Answer: Explain why scientists use controlled experiments.
-   Answer: To isolate variables and determine cause-and-effect relationships
+Q3. How does {topic} relate to everyday life?
+A) It has no practical applications
+B) It explains natural phenomena we observe daily
+C) It only matters to scientists
+D) It's purely theoretical
+Answer: B - Science concepts explain real-world observations
 
-3. Application: Design a simple experiment to test which surface has the most friction.
-   Answer: Use the same object on different surfaces, measure distance traveled"""
+Q4. What Working Scientifically skill is essential when studying {topic}?
+A) Memorization only
+B) Data collection and analysis
+C) Speed reading
+D) Artistic ability
+Answer: B - Scientific inquiry requires collecting and analyzing data
+
+Q5. Which tool might scientists use to investigate {topic}?
+A) Only calculators
+B) Appropriate measuring instruments and observations
+C) Crystal balls
+D) Random guessing
+Answer: B - Scientists use proper tools for measurement
+
+Q6. What is a key safety consideration when exploring {topic}?
+A) Safety is not important
+B) Following proper procedures and using equipment correctly
+C) Working alone always
+D) Ignoring instructions
+Answer: B - Safety protocols are essential in science
+
+Q7. How can you test your understanding of {topic}?
+A) Never practice
+B) Conduct experiments and solve problems
+C) Just read once
+D) Avoid questions
+Answer: B - Active practice builds understanding
+
+Q8. What makes {topic} important in NSW Stage 4 Science?
+A) It's not important
+B) It builds foundational knowledge for future learning
+C) It's just for tests
+D) It has no connection to curriculum
+Answer: B - Foundational concepts support ongoing learning
+
+Q9. Which statement about {topic} is most accurate?
+A) It never changes
+B) Our understanding evolves through research and discovery
+C) One person knows everything
+D) Questions are discouraged
+Answer: B - Science knowledge grows through investigation
+
+Q10. What's the best approach to learning {topic}?
+A) Passive listening only
+B) Active engagement with questions, experiments, and practice
+C) Avoiding difficult concepts
+D) Memorizing without understanding
+Answer: B - Active learning promotes deep understanding"""
+        elif 'Create 10 short answer' in prompt:
+            import re
+            topic_match = re.search(r'on: (.+?)\n', prompt)
+            topic = topic_match.group(1) if topic_match else "this topic"
+            
+            return f"""Q1. Explain the main concept of {topic} in your own words.
+Expected Answer: Should include definition, key characteristics, and basic explanation of how it works or why it's important.
+
+Q2. Describe a real-world example where {topic} is observed or applied.
+Expected Answer: Specific example from daily life, explanation of the connection, and why it demonstrates the concept.
+
+Q3. How would you design an experiment to investigate {topic}?
+Expected Answer: Clear hypothesis, variables to test, method of data collection, and expected observations.
+
+Q4. Compare and contrast two aspects of {topic}.
+Expected Answer: Identification of similarities, key differences, and explanation of significance.
+
+Q5. What Working Scientifically skills are important when studying {topic}? Explain why.
+Expected Answer: Mention of relevant WS skills (observation, data analysis, etc.), justification for each, application to the topic.
+
+Q6. Explain how {topic} connects to other areas of science.
+Expected Answer: Identification of related concepts, explanation of connections, integrated understanding.
+
+Q7. What questions do scientists still have about {topic}?
+Expected Answer: Identification of unknowns, importance of continued research, examples of current investigations.
+
+Q8. How has our understanding of {topic} changed over time?
+Expected Answer: Historical perspective, key discoveries, evolution of knowledge, modern understanding.
+
+Q9. Describe the role of {topic} in the NSW science curriculum.
+Expected Answer: Curriculum relevance, learning outcomes addressed, connection to Stage 4 goals.
+
+Q10. What safety considerations or ethical issues relate to {topic}?
+Expected Answer: Specific safety protocols or ethical concerns, importance of responsible practice, real-world implications."""
         else:
             return """Great effort on your answer! You're on the right track. Remember to think about the key concepts we discussed and how they apply to this situation. Keep practicing your scientific reasoning!"""

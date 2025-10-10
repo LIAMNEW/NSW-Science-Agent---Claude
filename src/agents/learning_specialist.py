@@ -1,5 +1,13 @@
 from typing import Dict, Any, List
 from src.agents.base_agent import BaseAgent
+from src.tools.resource_manager import (
+    load_resource_catalog, 
+    find_resources_by_query, 
+    get_youtube_videos,
+    find_resources_by_type,
+    format_resource_for_display
+)
+from src.tools.gemini_helper import generate_explanation
 
 
 class LearningSpecialist(BaseAgent):
@@ -23,16 +31,37 @@ Your teaching style should be:
 Always emphasize hands-on learning and scientific inquiry alongside theoretical knowledge."""
         
         super().__init__("Learning Specialist", system_instruction)
+        self.resource_catalog = load_resource_catalog()
     
     def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         topic = request.get('topic', '')
         curriculum_context = request.get('curriculum_context', {})
         student_level = request.get('level', 'beginner')
+        available_resources = request.get('available_resources', [])
+        
+        # Generate AI-powered explanation
+        ai_explanation = generate_explanation(
+            topic=topic,
+            context=str(curriculum_context),
+            reading_level="Year 7-8"
+        )
+        
+        # Find comprehensive resources from catalog
+        query_resources = find_resources_by_query(topic, self.resource_catalog)
+        youtube_videos = get_youtube_videos(topic, self.resource_catalog)
+        simulations = find_resources_by_type("Interactive Simulation", self.resource_catalog)
+        simulations = [s for s in simulations if topic.lower() in s.get('Resource.Title', '').lower() or 
+                       topic.lower() in s.get('Metadata.Description', '').lower()]
         
         prompt = f"""Create an engaging learning session for: {topic}
 
-Context from curriculum: {curriculum_context}
+Context: {curriculum_context}
 Student level: {student_level}
+
+Available resources:
+- {len(youtube_videos)} YouTube videos
+- {len(simulations)} interactive simulations
+- {len(query_resources)} total educational resources
 
 Provide:
 1. A clear, friendly explanation of the main concepts
@@ -43,14 +72,20 @@ Provide:
 
 Make it engaging and appropriate for Years 7-8 students."""
         
-        lesson_content = self.generate_response(prompt)
+        lesson_content = self.generate_response(prompt) if not ai_explanation.startswith("Let me explain") else ai_explanation
         
-        recommended_resources = self.recommend_resources(topic)
+        # Format all resources for display
+        all_resources = []
+        all_resources.extend([format_resource_for_display(v) for v in youtube_videos[:3]])
+        all_resources.extend([format_resource_for_display(s) for s in simulations[:3]])
+        all_resources.extend([format_resource_for_display(r) for r in query_resources[:4]])
         
         return {
             'agent': self.agent_name,
             'lesson_content': lesson_content,
-            'resources': recommended_resources,
+            'resources': all_resources,
+            'youtube_videos': [format_resource_for_display(v) for v in youtube_videos[:5]],
+            'simulations': [format_resource_for_display(s) for s in simulations[:3]],
             'next_action': 'present_to_student'
         }
     

@@ -36,18 +36,24 @@ class AgentOrchestrator:
         
         relevant_units = curriculum_response.get('relevant_units', [])
         curriculum_analysis = curriculum_response.get('analysis', '')
+        available_resources = curriculum_response.get('available_resources', [])
+        outcomes = curriculum_response.get('outcomes', {})
         
         learning_response = self.learning_agent.process_request({
             'topic': query,
             'curriculum_context': curriculum_analysis,
+            'available_resources': available_resources,
             'level': 'intermediate'
         })
         
         return {
             'type': 'learning',
             'curriculum_context': curriculum_analysis,
+            'outcomes': outcomes,
             'lesson': learning_response.get('lesson_content', ''),
             'resources': learning_response.get('resources', []),
+            'youtube_videos': learning_response.get('youtube_videos', []),
+            'simulations': learning_response.get('simulations', []),
             'units': relevant_units
         }
     
@@ -55,12 +61,14 @@ class AgentOrchestrator:
         assessment_response = self.assessment_agent.process_request({
             'action': 'create_quiz',
             'topic': topic,
-            'num_questions': 5
+            'num_questions': 10
         })
         
         return {
             'type': 'assessment',
-            'quiz': assessment_response.get('quiz_content', ''),
+            'multiple_choice': assessment_response.get('multiple_choice_questions', ''),
+            'short_answer': assessment_response.get('short_answer_questions', ''),
+            'quiz_summary': assessment_response.get('quiz_summary', ''),
             'topic': topic
         }
     

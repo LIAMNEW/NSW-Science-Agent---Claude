@@ -1,6 +1,8 @@
 from typing import Dict, Any, List
 from src.agents.base_agent import BaseAgent
 from src.config import NESA_CURRICULUM_UNITS, WORKING_SCIENTIFICALLY_SKILLS
+from src.tools.resource_manager import load_resource_catalog, find_resources_by_unit, find_resources_by_query
+from src.tools.utils import detect_outcomes
 
 
 class CurriculumSpecialist(BaseAgent):
@@ -12,6 +14,7 @@ Your role is to:
 2. Track student progress against curriculum standards
 3. Identify relevant learning outcomes for student queries
 4. Recommend appropriate next topics based on student proficiency
+5. Connect queries to appropriate educational resources
 
 You have deep knowledge of:
 - Physical World (Forces, energy, motion)
@@ -25,12 +28,20 @@ Always align your recommendations with NESA Stage 4 outcomes and emphasize the d
         super().__init__("Curriculum Specialist", system_instruction)
         self.curriculum_data = NESA_CURRICULUM_UNITS
         self.student_progress = {}
+        self.resource_catalog = load_resource_catalog()
     
     def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         student_query = request.get('query', '')
         student_id = request.get('student_id', 'default')
         
+        # Find relevant curriculum units
         relevant_units = self.find_relevant_units(student_query)
+        
+        # Detect NESA outcomes from query
+        outcomes = detect_outcomes(student_query)
+        
+        # Find matching resources
+        available_resources = find_resources_by_query(student_query, self.resource_catalog)
         
         prompt = f"""A student asks: "{student_query}"
 
@@ -41,14 +52,18 @@ Based on the NESA curriculum, identify:
 4. Prerequisites the student should understand
 
 Relevant curriculum units: {relevant_units}
+Detected outcomes: {outcomes}
+Available educational resources: {len(available_resources)} resources found
 
-Provide a clear, structured response."""
+Provide a clear, structured response that guides the learning journey."""
         
         analysis = self.generate_response(prompt)
         
         return {
             'agent': self.agent_name,
             'relevant_units': relevant_units,
+            'outcomes': outcomes,
+            'available_resources': available_resources[:5],  # Top 5 resources
             'analysis': analysis,
             'next_action': 'route_to_learning_specialist'
         }

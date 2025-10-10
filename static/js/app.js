@@ -82,12 +82,52 @@ function handleResponse(data, queryType) {
             addMessage('Learning Specialist', data.lesson);
         }
         
+        // Display YouTube videos
+        if (data.youtube_videos && data.youtube_videos.length > 0) {
+            let videosHtml = '<strong>📺 YouTube Learning Videos:</strong><br>';
+            data.youtube_videos.forEach(video => {
+                const videoId = extractYouTubeId(video.url);
+                if (videoId) {
+                    videosHtml += `<div class="resource-item video-item">
+                        <strong>${video.title}</strong><br>
+                        <a href="${video.url}" target="_blank" class="resource-link">Watch on YouTube →</a><br>
+                        <div class="video-embed">
+                            <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" 
+                                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                        </div>
+                    </div>`;
+                } else {
+                    videosHtml += `<div class="resource-item">
+                        <strong>${video.title}</strong><br>
+                        <a href="${video.url}" target="_blank" class="resource-link">Watch Video →</a>
+                    </div>`;
+                }
+            });
+            addMessage('Learning Specialist', videosHtml);
+        }
+        
+        // Display interactive simulations
+        if (data.simulations && data.simulations.length > 0) {
+            let simsHtml = '<strong>🔬 Interactive Simulations:</strong><br>';
+            data.simulations.forEach(sim => {
+                simsHtml += `<div class="resource-item simulation-item">
+                    <strong>${sim.title}</strong><br>
+                    <p>${sim.description || 'Interactive learning experience'}</p>
+                    <a href="${sim.url}" target="_blank" class="resource-link">Launch Simulation →</a>
+                </div>`;
+            });
+            addMessage('Learning Specialist', simsHtml);
+        }
+        
+        // Display other resources
         if (data.resources && data.resources.length > 0) {
-            let resourcesHtml = '<strong>Recommended Resources:</strong><br>';
+            let resourcesHtml = '<strong>📚 Additional Resources:</strong><br>';
             data.resources.forEach(resource => {
                 resourcesHtml += `<div class="resource-item">
                     <strong>${resource.title}</strong><br>
-                    Type: ${resource.type} | Source: ${resource.source}
+                    Type: ${resource.type} | Source: ${resource.source}<br>
+                    ${resource.url ? `<a href="${resource.url}" target="_blank" class="resource-link">Access Resource →</a>` : ''}
                 </div>`;
             });
             addMessage('Learning Specialist', resourcesHtml);
@@ -104,14 +144,29 @@ function handleResponse(data, queryType) {
             addMessage('Curriculum Specialist', unitsHtml);
         }
     } else if (queryType === 'quiz') {
-        if (data.quiz) {
-            addMessage('Assessment Specialist', data.quiz);
+        if (data.quiz_summary) {
+            addMessage('Assessment Specialist', data.quiz_summary);
+        }
+        
+        if (data.multiple_choice) {
+            addMessage('Assessment Specialist', '<strong>📝 Multiple Choice Questions (10):</strong><br>' + data.multiple_choice);
+        }
+        
+        if (data.short_answer) {
+            addMessage('Assessment Specialist', '<strong>✍️ Short Answer Questions (10):</strong><br>' + data.short_answer);
         }
     } else if (queryType === 'help') {
         if (data.message) {
             addMessage('Support Specialist', data.message);
         }
     }
+}
+
+function extractYouTubeId(url) {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 }
 
 document.getElementById('queryInput').addEventListener('keypress', function(e) {

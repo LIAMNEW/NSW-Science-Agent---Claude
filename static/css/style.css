@@ -211,6 +211,34 @@ header h1 {
     border-left: 3px solid #ff9800;
 }
 
+.video-item {
+    background: #e3f2fd;
+    border-left: 3px solid #2196f3;
+}
+
+.simulation-item {
+    background: #f3e5f5;
+    border-left: 3px solid #9c27b0;
+}
+
+.video-embed {
+    margin-top: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.resource-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.resource-link:hover {
+    text-decoration: underline;
+}
+
 .curriculum-unit {
     background: #e8f5e9;
     padding: 10px;
