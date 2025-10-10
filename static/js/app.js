@@ -148,12 +148,9 @@ function handleResponse(data, queryType) {
             addMessage('Assessment Specialist', data.quiz_summary);
         }
         
-        if (data.multiple_choice) {
-            addMessage('Assessment Specialist', '<strong>📝 Multiple Choice Questions (10):</strong><br>' + data.multiple_choice);
-        }
-        
-        if (data.short_answer) {
-            addMessage('Assessment Specialist', '<strong>✍️ Short Answer Questions (10):</strong><br>' + data.short_answer);
+        // Start interactive quiz
+        if (data.multiple_choice && data.short_answer) {
+            startInteractiveQuiz(data.multiple_choice, data.short_answer, data.topic);
         }
     } else if (queryType === 'help') {
         if (data.message) {
