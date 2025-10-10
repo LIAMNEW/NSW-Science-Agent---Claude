@@ -19,12 +19,15 @@ An intelligent multi-agent AI learning companion for NSW Stage 4 Science curricu
 - **Tools**: MCP (Model Context Protocol) for external resource connections
 
 ### NESA Curriculum Coverage
-**Content Strands:**
-- Working Scientifically (inquiry, investigation, data analysis skills)
-- Physical World (Forces, energy, motion)
-- Chemical World (States of matter, atoms, elements)
-- Earth and Space (Earth's systems, astronomy)
-- Living World (Cells, ecosystems, human body systems)
+**NSW Science 7-10 Syllabus (2023) - Stage 4 Focus Areas:**
+1. **Observing the Universe** (SC4-OTU-01) - Patterns in sky, Solar System, technology in astronomy
+2. **Forces** (SC4-FRC-01) - Contact and non-contact forces, motion, force diagrams
+3. **Cells and Classification** (SC4-LW-02) - Cell structure, organelles, classification systems
+4. **Solutions and Mixtures** (SC4-SOL-01) - Separation techniques, solubility, concentration
+5. **Living Systems** (SC4-LW-01) - Energy flow, body systems, ecosystems
+6. **Periodic Table and Atomic Structure** (SC4-PRT-01) - Atoms, elements, compounds
+7. **Change** - Physical and chemical changes
+8. **Data Science 1** - Scientific data analysis and interpretation
 
 **Working Scientifically Skills:**
 - Questioning and predicting
@@ -43,7 +46,14 @@ Current implementation provides:
 - NESA outcome detection and resource matching
 
 ## Recent Changes
-- **October 10, 2025 (Latest)**: Interactive Quiz System
+- **October 10, 2025 (Latest)**: Corrected to Stage 4 Syllabus
+  - **CRITICAL FIX**: Updated from incorrect Stage 2 (K-6) to correct Stage 4 (Years 7-8) content
+  - Implemented NSW Science 7-10 Syllabus (2023) with 8 focus areas
+  - Updated all quiz questions to use actual Stage 4 outcomes (SC4-FRC-01, SC4-LW-02, SC4-PRT-01, SC4-SOL-01)
+  - Created comprehensive Stage 4 fallback quizzes for all focus areas
+  - Fixed syllabus alignment: system now targets secondary students (Years 7-8), not primary
+  
+- **October 10, 2025**: Interactive Quiz System
   - Built interactive quiz interface with answer selection before reveal
   - Added automatic scoring for multiple choice questions (shows X/10 and percentage)
   - Implemented expected answer display for short answer (no scoring, self-assessment)

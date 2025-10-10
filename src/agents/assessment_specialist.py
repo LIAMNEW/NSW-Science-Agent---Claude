@@ -1,5 +1,7 @@
 from typing import Dict, Any, List
 from src.agents.base_agent import BaseAgent
+from src.data.syllabus_content import get_topic_content, STAGE_4_WS_SKILLS
+from src.data.stage4_fallback_quizzes import get_mc_fallback
 import random
 
 
@@ -38,41 +40,78 @@ Always provide specific, actionable feedback that helps students improve."""
             return {'error': 'Unknown assessment action'}
     
     def create_quiz(self, topic: str, num_questions: int = 5) -> Dict[str, Any]:
-        # Generate 10 multiple choice questions
-        mc_prompt = f"""Create 10 multiple choice questions for Year 7-8 students on: {topic}
+        # Get syllabus content for this topic
+        syllabus_content = get_topic_content(topic)
+        
+        # Extract key information
+        outcomes = syllabus_content.get('outcomes', [])
+        inquiry_questions = syllabus_content.get('inquiry_questions', [])
+        key_concepts = syllabus_content.get('key_concepts', {})
+        
+        # Build detailed concept list
+        concept_details = []
+        for concept_name, details in key_concepts.items():
+            concept_details.append(f"{concept_name}: {', '.join(details[:3])}")
+        
+        # Generate 10 multiple choice questions based on syllabus
+        mc_prompt = f"""Create 10 multiple choice questions for NSW Stage 4 (Years 7-8) students on: {topic}
+
+SYLLABUS OUTCOMES:
+{chr(10).join(outcomes)}
+
+INQUIRY QUESTIONS:
+{chr(10).join(inquiry_questions)}
+
+KEY CONCEPTS TO COVER:
+{chr(10).join(concept_details)}
+
+WORKING SCIENTIFICALLY SKILLS:
+{chr(10).join(STAGE_4_WS_SKILLS['Planning and conducting investigations'][:3])}
 
 Requirements for EACH question:
-1. Test different aspects of {topic} (concepts, applications, experiments, real-world connections)
-2. Include 4 options (A, B, C, D) with only ONE correct answer
-3. Make distractors plausible but clearly incorrect
-4. Vary difficulty from basic recall to higher-order thinking
-5. Relate to NSW Stage 4 Science curriculum outcomes
+1. Base questions on the ACTUAL syllabus content above
+2. Use inquiry questions as inspiration for higher-order questions
+3. Include 4 options (A, B, C, D) with only ONE correct answer
+4. Make distractors plausible but clearly incorrect
+5. Cover different key concepts from the syllabus
+6. Include at least 2 questions on Working Scientifically skills
+7. Make questions relevant to Years 7-8 understanding level
 
 Format:
-Q1. [Question text]
+Q1. [Question text based on syllabus concepts]
 A) [Option]
 B) [Option]
 C) [Option]
 D) [Option]
-Answer: [Letter] - [Brief explanation]
+Answer: [Letter] - [Brief explanation referencing syllabus]
 
 Provide all 10 questions."""
         
         mc_questions = self.generate_response(mc_prompt)
         
-        # Generate 10 short answer questions
-        sa_prompt = f"""Create 10 short answer questions for Year 7-8 students on: {topic}
+        # Generate 10 short answer questions based on syllabus
+        sa_prompt = f"""Create 10 short answer questions for NSW Stage 4 (Years 7-8) students on: {topic}
+
+SYLLABUS OUTCOMES:
+{chr(10).join(outcomes)}
+
+INQUIRY QUESTIONS:
+{chr(10).join(inquiry_questions)}
+
+KEY CONCEPTS TO ASSESS:
+{chr(10).join(concept_details)}
 
 Requirements for EACH question:
-1. Require 2-4 sentence responses
-2. Test understanding, not just recall
-3. Include: definitions, explanations, comparisons, applications, and scientific inquiry
-4. Vary difficulty levels
-5. Align with NSW Working Scientifically skills
+1. Base questions on ACTUAL inquiry questions and key concepts from syllabus
+2. Require 3-5 sentence responses appropriate for Years 7-8
+3. Test understanding, not just recall
+4. Include: explanations of syllabus concepts, real-world examples, investigations
+5. Focus on Working Scientifically skills: questioning, planning investigations, analyzing data
+6. Questions should help students demonstrate syllabus outcomes
 
 Format:
-Q1. [Question requiring short written response]
-Expected Answer: [Key points for full credit]
+Q1. [Question from syllabus inquiry questions or key concepts]
+Expected Answer: [Key syllabus points - specific concepts, examples, and Working Scientifically skills]
 
 Provide all 10 questions."""
         
@@ -115,114 +154,57 @@ Be supportive and focus on learning, not just correctness."""
         }
     
     def get_fallback_response(self, prompt: str) -> str:
+        """Fallback responses using Stage 4 content when Vertex AI unavailable"""
         if 'Create 10 multiple choice' in prompt:
             # Extract topic from prompt
             import re
             topic_match = re.search(r'on: (.+?)\n', prompt)
             topic = topic_match.group(1) if topic_match else "this topic"
             
-            return f"""Q1. What is the primary characteristic of {topic}?
-A) It only occurs in laboratories
-B) It involves observable phenomena and measurable properties
-C) It requires expensive equipment
-D) It only applies to living things
-Answer: B - Science involves studying observable, measurable phenomena
-
-Q2. In {topic}, which scientific method is most commonly used?
-A) Guessing randomly
-B) Asking opinions
-C) Systematic observation and experimentation
-D) Reading social media
-Answer: C - Scientific method requires systematic investigation
-
-Q3. How does {topic} relate to everyday life?
-A) It has no practical applications
-B) It explains natural phenomena we observe daily
-C) It only matters to scientists
-D) It's purely theoretical
-Answer: B - Science concepts explain real-world observations
-
-Q4. What Working Scientifically skill is essential when studying {topic}?
-A) Memorization only
-B) Data collection and analysis
-C) Speed reading
-D) Artistic ability
-Answer: B - Scientific inquiry requires collecting and analyzing data
-
-Q5. Which tool might scientists use to investigate {topic}?
-A) Only calculators
-B) Appropriate measuring instruments and observations
-C) Crystal balls
-D) Random guessing
-Answer: B - Scientists use proper tools for measurement
-
-Q6. What is a key safety consideration when exploring {topic}?
-A) Safety is not important
-B) Following proper procedures and using equipment correctly
-C) Working alone always
-D) Ignoring instructions
-Answer: B - Safety protocols are essential in science
-
-Q7. How can you test your understanding of {topic}?
-A) Never practice
-B) Conduct experiments and solve problems
-C) Just read once
-D) Avoid questions
-Answer: B - Active practice builds understanding
-
-Q8. What makes {topic} important in NSW Stage 4 Science?
-A) It's not important
-B) It builds foundational knowledge for future learning
-C) It's just for tests
-D) It has no connection to curriculum
-Answer: B - Foundational concepts support ongoing learning
-
-Q9. Which statement about {topic} is most accurate?
-A) It never changes
-B) Our understanding evolves through research and discovery
-C) One person knows everything
-D) Questions are discouraged
-Answer: B - Science knowledge grows through investigation
-
-Q10. What's the best approach to learning {topic}?
-A) Passive listening only
-B) Active engagement with questions, experiments, and practice
-C) Avoiding difficult concepts
-D) Memorizing without understanding
-Answer: B - Active learning promotes deep understanding"""
+            # Use Stage 4 fallback quizzes (covers all 8 focus areas)
+            return get_mc_fallback(topic.lower())
+        
         elif 'Create 10 short answer' in prompt:
+            # Extract topic
             import re
             topic_match = re.search(r'on: (.+?)\n', prompt)
             topic = topic_match.group(1) if topic_match else "this topic"
             
-            return f"""Q1. Explain the main concept of {topic} in your own words.
-Expected Answer: Should include definition, key characteristics, and basic explanation of how it works or why it's important.
+            # Get syllabus content for Stage 4
+            syllabus_content = get_topic_content(topic)
+            inquiry_questions = syllabus_content.get('inquiry_questions', [])
+            first_inquiry = inquiry_questions[0] if inquiry_questions else f"Explain the main concepts of {topic}."
+            
+            # Generic Stage 4 short answer template
+            return f"""Q1. {first_inquiry}
+Expected Answer: Provide a detailed explanation covering the main concepts, key scientific principles, and real-world applications relevant to Stage 4 (Years 7-8) understanding.
 
-Q2. Describe a real-world example where {topic} is observed or applied.
-Expected Answer: Specific example from daily life, explanation of the connection, and why it demonstrates the concept.
+Q2. Describe how you would investigate {topic} scientifically.
+Expected Answer: State a testable question, identify variables, describe method, explain how to collect and record data, mention safety considerations relevant to Years 7-8.
 
-Q3. How would you design an experiment to investigate {topic}?
-Expected Answer: Clear hypothesis, variables to test, method of data collection, and expected observations.
+Q3. How does {topic} relate to everyday life and real-world applications?
+Expected Answer: Give specific examples from daily life, technology, or industry. Explain the scientific principles involved.
 
-Q4. Compare and contrast two aspects of {topic}.
-Expected Answer: Identification of similarities, key differences, and explanation of significance.
+Q4. What Working Scientifically skills are important when studying {topic}?
+Expected Answer: Discuss questioning, planning investigations, conducting experiments, analyzing data, and communicating findings as they apply to this topic.
 
-Q5. What Working Scientifically skills are important when studying {topic}? Explain why.
-Expected Answer: Mention of relevant WS skills (observation, data analysis, etc.), justification for each, application to the topic.
+Q5. Explain the key scientific concepts underlying {topic}.
+Expected Answer: Define important terms, explain relationships between concepts, use scientific vocabulary appropriate for Years 7-8.
 
-Q6. Explain how {topic} connects to other areas of science.
-Expected Answer: Identification of related concepts, explanation of connections, integrated understanding.
+Q6. Compare and contrast different aspects of {topic}.
+Expected Answer: Identify similarities and differences, explain significance, demonstrate understanding of Stage 4 concepts.
 
-Q7. What questions do scientists still have about {topic}?
-Expected Answer: Identification of unknowns, importance of continued research, examples of current investigations.
+Q7. How has our understanding of {topic} evolved through scientific discoveries?
+Expected Answer: Describe how observations and evidence have shaped our knowledge, mention key discoveries or technologies.
 
-Q8. How has our understanding of {topic} changed over time?
-Expected Answer: Historical perspective, key discoveries, evolution of knowledge, modern understanding.
+Q8. Design an investigation to test a hypothesis about {topic}.
+Expected Answer: State hypothesis, identify independent/dependent variables, describe controlled conditions, explain data collection method.
 
-Q9. Describe the role of {topic} in the NSW science curriculum.
-Expected Answer: Curriculum relevance, learning outcomes addressed, connection to Stage 4 goals.
+Q9. What connections exist between {topic} and other areas of science?
+Expected Answer: Identify related concepts in physics, chemistry, biology, or Earth science. Explain how they connect.
 
-Q10. What safety considerations or ethical issues relate to {topic}?
-Expected Answer: Specific safety protocols or ethical concerns, importance of responsible practice, real-world implications."""
+Q10. Analyze data or observations related to {topic} and draw conclusions.
+Expected Answer: Interpret given information, identify patterns or trends, make evidence-based conclusions, suggest further investigations."""
+        
         else:
-            return """Great effort on your answer! You're on the right track. Remember to think about the key concepts we discussed and how they apply to this situation. Keep practicing your scientific reasoning!"""
+            return """Great effort on your answer! You're demonstrating good scientific thinking. Consider how this connects to the NSW Stage 4 outcomes we've been studying. Keep developing your inquiry and investigation skills!"""
