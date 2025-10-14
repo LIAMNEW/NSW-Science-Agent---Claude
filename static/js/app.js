@@ -74,6 +74,49 @@ async function sendQuery() {
 
 function handleResponse(data, queryType) {
     if (queryType === 'learn') {
+        // Display enhanced curriculum information
+        if (data.topic || data.content_outcomes) {
+            let curriculumHtml = '<div class="curriculum-info">';
+            
+            if (data.topic) {
+                curriculumHtml += `<strong>📚 Topic:</strong> ${data.topic}<br>`;
+                if (data.unit) {
+                    curriculumHtml += `<strong>Unit:</strong> ${data.unit}<br>`;
+                }
+            }
+            
+            if (data.content_outcomes && data.content_outcomes.length > 0) {
+                curriculumHtml += `<br><strong>🎯 NESA Outcomes:</strong><br>`;
+                data.content_outcomes.forEach(outcome => {
+                    curriculumHtml += `<span class="outcome-badge">${outcome}</span><br>`;
+                });
+            }
+            
+            if (data.inquiry_questions && data.inquiry_questions.length > 0) {
+                curriculumHtml += `<br><strong>❓ Key Questions:</strong><br>`;
+                data.inquiry_questions.forEach(q => {
+                    curriculumHtml += `• ${q}<br>`;
+                });
+            }
+            
+            if (data.learning_objectives && data.learning_objectives.length > 0) {
+                curriculumHtml += `<br><strong>✓ Learning Objectives:</strong><br>`;
+                data.learning_objectives.forEach(obj => {
+                    curriculumHtml += `• ${obj}<br>`;
+                });
+            }
+            
+            if (data.misconceptions && data.misconceptions.length > 0) {
+                curriculumHtml += `<br><strong>⚠️ Common Misconceptions to Avoid:</strong><br>`;
+                data.misconceptions.forEach(misc => {
+                    curriculumHtml += `• ${misc}<br>`;
+                });
+            }
+            
+            curriculumHtml += '</div>';
+            addMessage('Curriculum Specialist', curriculumHtml);
+        }
+        
         if (data.curriculum_context) {
             addMessage('Curriculum Specialist', data.curriculum_context);
         }
@@ -131,17 +174,6 @@ function handleResponse(data, queryType) {
                 </div>`;
             });
             addMessage('Learning Specialist', resourcesHtml);
-        }
-        
-        if (data.units && data.units.length > 0) {
-            let unitsHtml = '<strong>Relevant NESA Curriculum Units:</strong><br>';
-            data.units.forEach(unit => {
-                unitsHtml += `<div class="curriculum-unit">
-                    <strong>${unit.unit}</strong> (${unit.code})<br>
-                    Topics: ${unit.topics.join(', ')}
-                </div>`;
-            });
-            addMessage('Curriculum Specialist', unitsHtml);
         }
     } else if (queryType === 'quiz') {
         if (data.quiz_summary) {

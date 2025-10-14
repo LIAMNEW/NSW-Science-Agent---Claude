@@ -34,10 +34,8 @@ class AgentOrchestrator:
             'student_id': student_id
         })
         
-        relevant_units = curriculum_response.get('relevant_units', [])
         curriculum_analysis = curriculum_response.get('analysis', '')
         available_resources = curriculum_response.get('available_resources', [])
-        outcomes = curriculum_response.get('outcomes', {})
         
         learning_response = self.learning_agent.process_request({
             'topic': query,
@@ -49,12 +47,17 @@ class AgentOrchestrator:
         return {
             'type': 'learning',
             'curriculum_context': curriculum_analysis,
-            'outcomes': outcomes,
+            'topic': curriculum_response.get('topic', query),
+            'unit': curriculum_response.get('unit', ''),
+            'content_outcomes': curriculum_response.get('content_outcomes', []),
+            'ws_outcomes': curriculum_response.get('ws_outcomes', []),
+            'inquiry_questions': curriculum_response.get('inquiry_questions', []),
+            'learning_objectives': curriculum_response.get('learning_objectives', []),
+            'misconceptions': curriculum_response.get('misconceptions', []),
             'lesson': learning_response.get('lesson_content', ''),
             'resources': learning_response.get('resources', []),
             'youtube_videos': learning_response.get('youtube_videos', []),
-            'simulations': learning_response.get('simulations', []),
-            'units': relevant_units
+            'simulations': learning_response.get('simulations', [])
         }
     
     def handle_assessment_request(self, topic: str, student_id: str) -> Dict[str, Any]:
