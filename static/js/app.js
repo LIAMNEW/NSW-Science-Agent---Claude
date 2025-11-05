@@ -117,9 +117,8 @@ function handleResponse(data, queryType) {
             addMessage('Curriculum Specialist', curriculumHtml);
         }
         
-        if (data.curriculum_context) {
-            addMessage('Curriculum Specialist', data.curriculum_context);
-        }
+        // Note: curriculum_context removed to avoid duplicate display
+        // The enhanced curriculum info above already provides all necessary details
         
         if (data.lesson) {
             addMessage('Learning Specialist', data.lesson);
