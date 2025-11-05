@@ -73,79 +73,16 @@ async function sendQuery() {
 }
 
 function handleResponse(data, queryType) {
+    // Handle curriculum-only requests
+    if (queryType === 'curriculum') {
+        displayCurriculumInfo(data);
+        return;
+    }
+    
+    // Handle learning requests (lesson only)
     if (queryType === 'learn') {
-        // Display enhanced curriculum information
-        if (data.topic || data.content_outcomes) {
-            let curriculumHtml = '<div class="curriculum-info">';
-            
-            if (data.topic) {
-                curriculumHtml += `<strong>📚 Topic:</strong> ${data.topic}<br>`;
-                if (data.unit) {
-                    curriculumHtml += `<strong>Unit:</strong> ${data.unit}<br>`;
-                }
-            }
-            
-            if (data.content_outcomes && data.content_outcomes.length > 0) {
-                curriculumHtml += `<br><strong>🎯 NESA Outcomes:</strong><br>`;
-                data.content_outcomes.forEach(outcome => {
-                    curriculumHtml += `<span class="outcome-badge">${outcome}</span><br>`;
-                });
-            }
-            
-            if (data.inquiry_questions && data.inquiry_questions.length > 0) {
-                curriculumHtml += `<br><strong>❓ Key Questions:</strong><br>`;
-                data.inquiry_questions.forEach(q => {
-                    curriculumHtml += `• ${q}<br>`;
-                });
-            }
-            
-            if (data.learning_objectives && data.learning_objectives.length > 0) {
-                curriculumHtml += `<br><strong>✓ Learning Objectives:</strong><br>`;
-                data.learning_objectives.forEach(obj => {
-                    curriculumHtml += `• ${obj}<br>`;
-                });
-            }
-            
-            if (data.misconceptions && data.misconceptions.length > 0) {
-                curriculumHtml += `<br><strong>⚠️ Common Misconceptions to Avoid:</strong><br>`;
-                data.misconceptions.forEach(misc => {
-                    curriculumHtml += `• ${misc}<br>`;
-                });
-            }
-            
-            if (data.key_ideas && data.key_ideas.length > 0) {
-                curriculumHtml += `<br><strong>💡 NESA Key Ideas:</strong><br>`;
-                data.key_ideas.forEach(idea => {
-                    curriculumHtml += `• ${idea}<br>`;
-                });
-            }
-            
-            if (data.background_knowledge && data.background_knowledge.length > 0) {
-                curriculumHtml += `<br><strong>📖 Background Knowledge:</strong><br>`;
-                data.background_knowledge.forEach(bg => {
-                    curriculumHtml += `• ${bg}<br>`;
-                });
-            }
-            
-            if (data.investigations && data.investigations.length > 0) {
-                curriculumHtml += `<br><strong>🔬 NESA-Recommended Investigations:</strong><br>`;
-                data.investigations.slice(0, 3).forEach(inv => {
-                    curriculumHtml += `<div class="investigation-item">• ${inv}</div>`;
-                });
-                if (data.investigations.length > 3) {
-                    curriculumHtml += `<em>...and ${data.investigations.length - 3} more investigations</em><br>`;
-                }
-            }
-            
-            curriculumHtml += '</div>';
-            addMessage('Curriculum Specialist', curriculumHtml);
-        }
-        
-        // Note: curriculum_context removed to avoid duplicate display
-        // The enhanced curriculum info above already provides all necessary details
-        
         if (data.lesson) {
-            addMessage('Learning Specialist', data.lesson);
+            addMessage('Learning Specialist (Nova)', data.lesson);
         }
         
         // Display YouTube videos
@@ -219,6 +156,72 @@ function extractYouTubeId(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
+}
+
+function displayCurriculumInfo(data) {
+    let curriculumHtml = '<div class="curriculum-info">';
+    
+    if (data.topic) {
+        curriculumHtml += `<strong>📚 Topic:</strong> ${data.topic}<br>`;
+        if (data.unit) {
+            curriculumHtml += `<strong>Unit:</strong> ${data.unit}<br>`;
+        }
+    }
+    
+    if (data.content_outcomes && data.content_outcomes.length > 0) {
+        curriculumHtml += `<br><strong>🎯 NESA Outcomes:</strong><br>`;
+        data.content_outcomes.forEach(outcome => {
+            curriculumHtml += `<span class="outcome-badge">${outcome}</span><br>`;
+        });
+    }
+    
+    if (data.inquiry_questions && data.inquiry_questions.length > 0) {
+        curriculumHtml += `<br><strong>❓ Key Questions:</strong><br>`;
+        data.inquiry_questions.forEach(q => {
+            curriculumHtml += `• ${q}<br>`;
+        });
+    }
+    
+    if (data.learning_objectives && data.learning_objectives.length > 0) {
+        curriculumHtml += `<br><strong>✓ Learning Objectives:</strong><br>`;
+        data.learning_objectives.forEach(obj => {
+            curriculumHtml += `• ${obj}<br>`;
+        });
+    }
+    
+    if (data.misconceptions && data.misconceptions.length > 0) {
+        curriculumHtml += `<br><strong>⚠️ Common Misconceptions to Avoid:</strong><br>`;
+        data.misconceptions.forEach(misc => {
+            curriculumHtml += `• ${misc}<br>`;
+        });
+    }
+    
+    if (data.key_ideas && data.key_ideas.length > 0) {
+        curriculumHtml += `<br><strong>💡 NESA Key Ideas:</strong><br>`;
+        data.key_ideas.forEach(idea => {
+            curriculumHtml += `• ${idea}<br>`;
+        });
+    }
+    
+    if (data.background_knowledge && data.background_knowledge.length > 0) {
+        curriculumHtml += `<br><strong>📖 Background Knowledge:</strong><br>`;
+        data.background_knowledge.forEach(bg => {
+            curriculumHtml += `• ${bg}<br>`;
+        });
+    }
+    
+    if (data.investigations && data.investigations.length > 0) {
+        curriculumHtml += `<br><strong>🔬 NESA-Recommended Investigations:</strong><br>`;
+        data.investigations.slice(0, 3).forEach(inv => {
+            curriculumHtml += `<div class="investigation-item">• ${inv}</div>`;
+        });
+        if (data.investigations.length > 3) {
+            curriculumHtml += `<em>...and ${data.investigations.length - 3} more investigations</em><br>`;
+        }
+    }
+    
+    curriculumHtml += '</div>';
+    addMessage('Curriculum Specialist', curriculumHtml);
 }
 
 document.getElementById('queryInput').addEventListener('keypress', function(e) {

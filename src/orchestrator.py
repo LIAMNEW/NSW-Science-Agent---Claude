@@ -19,7 +19,9 @@ class AgentOrchestrator:
         request_type = request.get('type', 'learn')
         student_id = request.get('student_id', 'default')
         
-        if request_type == 'learn':
+        if request_type == 'curriculum':
+            return self.handle_curriculum_request(query, student_id)
+        elif request_type == 'learn':
             return self.handle_learning_request(query, student_id)
         elif request_type == 'quiz':
             return self.handle_assessment_request(query, student_id)
@@ -28,7 +30,31 @@ class AgentOrchestrator:
         else:
             return self.handle_learning_request(query, student_id)
     
+    def handle_curriculum_request(self, query: str, student_id: str) -> Dict[str, Any]:
+        """Handle curriculum-only requests - just syllabus info, no lesson"""
+        curriculum_response = self.curriculum_agent.process_request({
+            'query': query,
+            'student_id': student_id
+        })
+        
+        return {
+            'type': 'curriculum',
+            'agent': 'Curriculum Specialist',
+            'topic': curriculum_response.get('topic', query),
+            'unit': curriculum_response.get('unit', ''),
+            'content_outcomes': curriculum_response.get('content_outcomes', []),
+            'ws_outcomes': curriculum_response.get('ws_outcomes', []),
+            'inquiry_questions': curriculum_response.get('inquiry_questions', []),
+            'learning_objectives': curriculum_response.get('learning_objectives', []),
+            'misconceptions': curriculum_response.get('misconceptions', []),
+            'key_ideas': curriculum_response.get('key_ideas', []),
+            'investigations': curriculum_response.get('investigations', []),
+            'background_knowledge': curriculum_response.get('background_knowledge', [])
+        }
+    
     def handle_learning_request(self, query: str, student_id: str) -> Dict[str, Any]:
+        """Handle learning requests - just interactive lesson, no curriculum overhead"""
+        # Get minimal curriculum context for the lesson
         curriculum_response = self.curriculum_agent.process_request({
             'query': query,
             'student_id': student_id
@@ -46,17 +72,8 @@ class AgentOrchestrator:
         
         return {
             'type': 'learning',
-            'curriculum_context': curriculum_analysis,
+            'agent': 'Learning Specialist (Nova)',
             'topic': curriculum_response.get('topic', query),
-            'unit': curriculum_response.get('unit', ''),
-            'content_outcomes': curriculum_response.get('content_outcomes', []),
-            'ws_outcomes': curriculum_response.get('ws_outcomes', []),
-            'inquiry_questions': curriculum_response.get('inquiry_questions', []),
-            'learning_objectives': curriculum_response.get('learning_objectives', []),
-            'misconceptions': curriculum_response.get('misconceptions', []),
-            'key_ideas': curriculum_response.get('key_ideas', []),
-            'investigations': curriculum_response.get('investigations', []),
-            'background_knowledge': curriculum_response.get('background_knowledge', []),
             'lesson': learning_response.get('lesson_content', ''),
             'resources': learning_response.get('resources', []),
             'youtube_videos': learning_response.get('youtube_videos', []),
