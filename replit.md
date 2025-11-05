@@ -48,7 +48,16 @@ Current implementation provides:
 - NESA outcome detection and resource matching
 
 ## Recent Changes
-- **November 5, 2025 (Latest)**: Fixed Robotic Agent Responses with Gemini Integration
+- **November 5, 2025 (Latest)**: Added Agent Selection for Individual Responses
+  - **USER-REQUESTED**: Implemented agent selection dropdown to prevent multiple agents responding simultaneously
+  - Added 4 clear options: Curriculum Info, Interactive Lesson (Nova), Learning Buddy Chat (Sage), Take a Quiz
+  - Created separate orchestrator handlers for curriculum-only vs learning-only requests
+  - Modified frontend to display only the selected agent's response
+  - Eliminated overlap: Curriculum Info shows syllabus/outcomes only, Interactive Lesson shows teaching content only
+  - Users now have full control over which AI specialist they interact with
+  - All agents continue to use authentic NESA curriculum materials and Gemini AI for dynamic responses
+  
+- **November 5, 2025**: Fixed Robotic Agent Responses with Gemini Integration
   - **CRITICAL FIX**: Switched from unavailable Vertex AI to Google Gemini API (gemini-2.0-flash)
   - Created GeminiAgent base class for natural conversation capabilities
   - Redesigned Learning Specialist with "Nova" persona - enthusiastic, creative, engaging
