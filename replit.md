@@ -48,7 +48,18 @@ Current implementation provides:
 - NESA outcome detection and resource matching
 
 ## Recent Changes
-- **November 5, 2025 (Latest)**: Official NESA Curriculum Integration
+- **November 5, 2025 (Latest)**: Fixed Robotic Agent Responses with Gemini Integration
+  - **CRITICAL FIX**: Switched from unavailable Vertex AI to Google Gemini API (gemini-2.0-flash)
+  - Created GeminiAgent base class for natural conversation capabilities
+  - Redesigned Learning Specialist with "Nova" persona - enthusiastic, creative, engaging
+  - Redesigned Support Specialist with "Sage" persona - empathetic, encouraging, varied
+  - Implemented conversation memory with chat sessions for context-aware responses
+  - Added explicit variation rules to prevent repetitive, robotic responses
+  - Verified agents produce unique, conversational responses across multiple requests
+  - Maintained all existing NESA curriculum integration and resource catalog features
+  - Performance: Gemini responses take ~20-40s but deliver high-quality, personalized content
+  
+- **November 5, 2025**: Official NESA Curriculum Integration
   - **MAJOR UPGRADE**: System now uses 100% authentic NESA curriculum materials
   - Parsed 3 official NESA DOCX files (Syllabus Support, Full Syllabus, Sample Assessments)
   - Extracted official content for all 8 Stage 4 focus areas:
