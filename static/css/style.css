@@ -484,3 +484,18 @@ header h1 {
     margin: 8px 0;
     border-left: 3px solid #667eea;
 }
+
+/* Investigation items styling */
+.investigation-item {
+    background: #fff3e0;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    border-left: 3px solid #ff9800;
+    font-size: 0.95em;
+}
+
+.curriculum-info em {
+    color: #666;
+    font-size: 0.9em;
+}

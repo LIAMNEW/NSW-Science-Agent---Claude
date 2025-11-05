@@ -3,6 +3,7 @@ from src.agents.base_agent import BaseAgent
 from src.config import NESA_CURRICULUM_UNITS, WORKING_SCIENTIFICALLY_SKILLS
 from src.tools.resource_manager import load_resource_catalog, find_resources_by_unit, find_resources_by_query
 from src.tools.utils import detect_outcomes
+from src.data.nesa_official_content import get_nesa_teaching_content, get_key_ideas_for_topic, get_investigations_for_topic
 
 
 class CurriculumSpecialist(BaseAgent):
@@ -262,16 +263,24 @@ You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing sc
         # Enhanced topic detection
         matched_data = self._detect_topic(student_query.lower())
         
+        # Get official NESA content for this topic
+        nesa_content = get_nesa_teaching_content(matched_data["topic"])
+        
         # Generate learning objectives
         learning_objectives = self._generate_learning_objectives(matched_data)
         
         # Get misconceptions
         misconceptions = self._get_misconceptions(matched_data["topic"])
         
+        # Get official NESA key ideas and investigations
+        key_ideas = nesa_content.get('key_ideas', [])
+        investigations = nesa_content.get('investigations', [])
+        background_knowledge = nesa_content.get('background_knowledge', [])
+        
         # Find matching resources
         available_resources = find_resources_by_query(student_query, self.resource_catalog)
         
-        # Build enhanced response
+        # Build enhanced response with official NESA content
         response_data = {
             'agent': self.agent_name,
             'topic': matched_data["topic"],
@@ -281,6 +290,9 @@ You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing sc
             'inquiry_questions': matched_data.get("inquiry_questions", []),
             'learning_objectives': learning_objectives,
             'misconceptions': misconceptions,
+            'key_ideas': key_ideas,
+            'investigations': investigations,
+            'background_knowledge': background_knowledge,
             'available_resources': available_resources[:5],
             'next_action': 'route_to_learning_specialist'
         }

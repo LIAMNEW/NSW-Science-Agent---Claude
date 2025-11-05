@@ -8,6 +8,7 @@ from src.tools.resource_manager import (
     format_resource_for_display
 )
 from src.tools.gemini_helper import generate_explanation
+from src.data.nesa_official_content import get_nesa_teaching_content
 
 
 class LearningSpecialist(BaseAgent):
@@ -39,6 +40,12 @@ Always emphasize hands-on learning and scientific inquiry alongside theoretical 
         student_level = request.get('level', 'beginner')
         available_resources = request.get('available_resources', [])
         
+        # Get official NESA teaching content
+        nesa_content = get_nesa_teaching_content(topic)
+        investigations = nesa_content.get('investigations', [])
+        key_ideas = nesa_content.get('key_ideas', [])
+        teaching_focus = nesa_content.get('teaching_focus', '')
+        
         # Generate AI-powered explanation
         ai_explanation = generate_explanation(
             topic=topic,
@@ -53,22 +60,29 @@ Always emphasize hands-on learning and scientific inquiry alongside theoretical 
         simulations = [s for s in simulations if topic.lower() in s.get('Resource.Title', '').lower() or 
                        topic.lower() in s.get('Metadata.Description', '').lower()]
         
+        # Build prompt with NESA investigations
+        investigations_text = '\n'.join(f'• {inv}' for inv in investigations[:3]) if investigations else ''
+        
         prompt = f"""Create an engaging learning session for: {topic}
 
-Context: {curriculum_context}
-Student level: {student_level}
+NESA Teaching Focus: {teaching_focus}
+
+Key Ideas to Cover:
+{chr(10).join(f'• {idea}' for idea in key_ideas[:5])}
+
+NESA-Recommended Investigations:
+{investigations_text}
 
 Available resources:
 - {len(youtube_videos)} YouTube videos
 - {len(simulations)} interactive simulations
-- {len(query_resources)} total educational resources
 
 Provide:
 1. A clear, friendly explanation of the main concepts
-2. Real-world examples or analogies
-3. Suggested hands-on activities or experiments
+2. Real-world examples that connect to students' lives
+3. Reference to the NESA investigations above that students can try
 4. Questions to encourage critical thinking
-5. Connections to other science topics
+5. How this connects to real-world applications
 
 Make it engaging and appropriate for Years 7-8 students."""
         

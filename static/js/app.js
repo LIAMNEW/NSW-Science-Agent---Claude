@@ -113,6 +113,30 @@ function handleResponse(data, queryType) {
                 });
             }
             
+            if (data.key_ideas && data.key_ideas.length > 0) {
+                curriculumHtml += `<br><strong>💡 NESA Key Ideas:</strong><br>`;
+                data.key_ideas.forEach(idea => {
+                    curriculumHtml += `• ${idea}<br>`;
+                });
+            }
+            
+            if (data.background_knowledge && data.background_knowledge.length > 0) {
+                curriculumHtml += `<br><strong>📖 Background Knowledge:</strong><br>`;
+                data.background_knowledge.forEach(bg => {
+                    curriculumHtml += `• ${bg}<br>`;
+                });
+            }
+            
+            if (data.investigations && data.investigations.length > 0) {
+                curriculumHtml += `<br><strong>🔬 NESA-Recommended Investigations:</strong><br>`;
+                data.investigations.slice(0, 3).forEach(inv => {
+                    curriculumHtml += `<div class="investigation-item">• ${inv}</div>`;
+                });
+                if (data.investigations.length > 3) {
+                    curriculumHtml += `<em>...and ${data.investigations.length - 3} more investigations</em><br>`;
+                }
+            }
+            
             curriculumHtml += '</div>';
             addMessage('Curriculum Specialist', curriculumHtml);
         }
