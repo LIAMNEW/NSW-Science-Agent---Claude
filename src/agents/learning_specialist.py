@@ -74,13 +74,6 @@ Remember: You're not just delivering content - you're sparking curiosity and bui
         key_ideas = nesa_content.get('key_ideas', [])
         teaching_focus = nesa_content.get('teaching_focus', '')
         
-        # Generate AI-powered explanation
-        ai_explanation = generate_explanation(
-            topic=topic,
-            context=str(curriculum_context),
-            reading_level="Year 7-8"
-        )
-        
         # Find comprehensive resources from catalog
         query_resources = find_resources_by_query(topic, self.resource_catalog)
         youtube_videos = get_youtube_videos(topic, self.resource_catalog)
