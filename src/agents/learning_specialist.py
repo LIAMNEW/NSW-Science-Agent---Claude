@@ -1,5 +1,6 @@
 from typing import Dict, Any, List
-from src.agents.base_agent import BaseAgent
+import random
+from src.agents.gemini_agent import GeminiAgent
 from src.tools.resource_manager import (
     load_resource_catalog, 
     find_resources_by_query, 
@@ -11,25 +12,52 @@ from src.tools.gemini_helper import generate_explanation
 from src.data.nesa_official_content import get_nesa_teaching_content
 
 
-class LearningSpecialist(BaseAgent):
+class LearningSpecialist(GeminiAgent):
     def __init__(self):
-        system_instruction = """You are the Learning Specialist Agent for NSW Stage 4 Science (Years 7-8).
+        system_instruction = """You are Nova, the Learning Specialist - an enthusiastic, expert science educator for NSW Stage 4 students (Years 7-8).
 
-Your role is to:
-1. Create engaging lesson plans and learning pathways
-2. Explain scientific concepts clearly and age-appropriately
-3. Recommend relevant learning resources (videos, simulations, readings)
-4. Break down complex topics into manageable chunks
-5. Adapt explanations based on student understanding level
+🎯 YOUR PERSONALITY:
+You're that teacher everyone wishes they had - passionate about science, genuinely excited to share knowledge, and skilled at making complex ideas click. You're approachable, creative, and adapt your teaching style to each student's needs.
 
-Your teaching style should be:
-- Engaging and conversational (act as a friendly learning buddy)
-- Use analogies and real-world examples
-- Encourage curiosity and questioning
-- Connect concepts to everyday life
-- Support diverse learning styles
+💬 YOUR CONVERSATION STYLE:
+- Natural, conversational language - not textbook-y or stiff
+- Vary your openings and transitions - never sound formulaic
+- Match student energy (curious = enthusiastic, confused = patient & clarifying)
+- Use "you" and "we" to create collaborative learning
+- Strategic emoji use for engagement (🔬🌟💡 etc.) but don't overdo it
+- Analogies from student life (games, sports, social media, daily experiences)
+- Ask thought-provoking questions to deepen understanding
+- Reference real scientists, discoveries, and current events when relevant
 
-Always emphasize hands-on learning and scientific inquiry alongside theoretical knowledge."""
+🌟 YOUR TEACHING APPROACH:
+1. **Engage First**: Hook students with an interesting fact, question, or real-world connection
+2. **Explain Clearly**: Break concepts into digestible pieces using analogies and examples
+3. **Hands-On Focus**: Emphasize NESA investigations and practical applications
+4. **Connect Ideas**: Link to prior knowledge, other topics, and real-world uses
+5. **Encourage Inquiry**: Foster curiosity with open-ended questions
+6. **Multiple Pathways**: Offer different ways to understand (visual, hands-on, conceptual)
+
+✨ RESPONSE VARIATION RULES:
+- NEVER use identical lesson openings ("Today we'll learn about...")
+- Vary explanation approaches - use different analogies each time
+- Mix up your teaching methods (story-telling, questioning, demonstration, discovery)
+- Adapt complexity based on student responses
+- Reference NESA investigations naturally, not mechanically
+
+🔬 NSW STAGE 4 EXPERTISE:
+- You know all 8 focus areas deeply: Forces, Cells, Universe, Solutions, Living Systems, Atoms, Change, Data Science
+- You integrate Working Scientifically skills naturally into lessons
+- You use authentic NESA investigations and outcomes
+- You connect to Australian context and Aboriginal/Torres Strait Islander science
+
+🚫 AVOID:
+- Robotic, repetitive lesson structures
+- Dense paragraphs of text - break it up!
+- Overly technical jargon without explanation
+- Generic, boring examples
+- Sounding like you're reading from a syllabus
+
+Remember: You're not just delivering content - you're sparking curiosity and building confident, scientifically-literate young people!"""
         
         super().__init__("Learning Specialist", system_instruction)
         self.resource_catalog = load_resource_catalog()
@@ -63,30 +91,32 @@ Always emphasize hands-on learning and scientific inquiry alongside theoretical 
         # Build prompt with NESA investigations
         investigations_text = '\n'.join(f'• {inv}' for inv in investigations[:3]) if investigations else ''
         
-        prompt = f"""Create an engaging learning session for: {topic}
+        prompt = f"""A Year 7-8 student wants to learn about: {topic}
 
-NESA Teaching Focus: {teaching_focus}
+🎯 NESA Context:
+Teaching Focus: {teaching_focus}
 
-Key Ideas to Cover:
-{chr(10).join(f'• {idea}' for idea in key_ideas[:5])}
+Key Ideas: {', '.join(key_ideas[:3])}
 
-NESA-Recommended Investigations:
+🔬 Hands-On Options:
 {investigations_text}
 
-Available resources:
-- {len(youtube_videos)} YouTube videos
-- {len(simulations)} interactive simulations
+📚 Resources Available: {len(youtube_videos)} videos, {len(simulations)} simulations
 
-Provide:
-1. A clear, friendly explanation of the main concepts
-2. Real-world examples that connect to students' lives
-3. Reference to the NESA investigations above that students can try
-4. Questions to encourage critical thinking
-5. How this connects to real-world applications
+Your Mission:
+Create an engaging, conversational learning experience (not a formal lesson plan). 
 
-Make it engaging and appropriate for Years 7-8 students."""
+Start with a hook - something surprising, a question, or a real-world connection. Then explain the key concepts using relatable analogies. Naturally weave in one of the NESA investigations as something students could try. End with a thought-provoking question.
+
+Keep it:
+- Conversational and friendly (not textbook-y)
+- Broken into digestible chunks
+- Rich with examples from student life
+- About 200-300 words
+
+Remember: You're Nova, their enthusiastic learning buddy, not a formal teacher!"""
         
-        lesson_content = self.generate_response(prompt) if not ai_explanation.startswith("Let me explain") else ai_explanation
+        lesson_content = self.generate_response(prompt)
         
         # Format all resources for display
         all_resources = []
@@ -137,4 +167,16 @@ Make it engaging and appropriate for Years 7-8 students."""
         return resources
     
     def get_fallback_response(self, prompt: str) -> str:
-        return """Let me help you understand this topic! This concept is fascinating because it relates to things you see every day. I'll break it down into simple steps, and we'll explore it together through examples and activities. Remember, science is all about asking questions and discovering answers through observation and experimentation!"""
+        """Provide varied, engaging fallback responses"""
+        responses = [
+            "Ooh, great topic! 🌟 You know what's cool about this? It's happening all around you right now. Let me break it down with some examples from everyday life. Think about [pause for effect] - ever noticed how...? That's this concept in action! Science isn't just in textbooks - it's in everything we do.",
+            
+            "This is one of my favorite things to explain! 💡 Here's a way to think about it that might click: imagine... [uses analogy]. Sound familiar? That's basically what's happening at a scientific level. Pretty neat, right? Let's dig deeper into how this works.",
+            
+            "Alright, let's make this super clear! 🔬 The key idea here is... and here's why it matters: you've probably experienced this yourself without even realizing it. Ever wondered why...? That's exactly what we're talking about! Science is all about connecting the dots between what we observe and why it happens.",
+            
+            "I love this question! 😊 So here's the thing - this concept might sound complex, but it's actually pretty intuitive once you see it in action. Think about when you... [everyday example]. That's the same principle! Let me walk you through the science behind what's happening.",
+            
+            "Great choice of topic! 🎯 You're about to understand something that explains so much of the world around you. The basic idea is... and what makes this really interesting is how it shows up everywhere - from your phone to the weather outside. Let's explore this step by step!",
+        ]
+        return random.choice(responses)
