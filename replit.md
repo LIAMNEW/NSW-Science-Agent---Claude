@@ -26,8 +26,8 @@ An intelligent multi-agent AI learning companion for NSW Stage 4 Science curricu
 4. **Solutions and Mixtures** (SC4-SOL-01) - Separation techniques, solubility, concentration
 5. **Living Systems** (SC4-LW-01) - Energy flow, body systems, ecosystems
 6. **Periodic Table and Atomic Structure** (SC4-PRT-01) - Atoms, elements, compounds
-7. **Change** - Physical and chemical changes
-8. **Data Science 1** - Scientific data analysis and interpretation
+7. **Change** (SC4-CHG-01) - Physical and chemical changes, reversibility, conservation of mass
+8. **Data Science 1** (SC4-DAT-01) - Scientific data analysis and interpretation
 
 **Working Scientifically Skills:**
 - Questioning and predicting
@@ -40,13 +40,29 @@ Current implementation provides:
 - Multi-agent architecture with orchestrator
 - Web-based student interface with purple gradient UI
 - Integration with Google Vertex AI and Gemini
+- **Authentic NESA curriculum content** from official documents
+- NESA-recommended investigations, key ideas, and teaching strategies
 - Comprehensive resource catalog (50+ educational resources)
 - Interactive learning sessions with YouTube videos and simulations
 - Enhanced quiz system (20 questions per topic)
 - NESA outcome detection and resource matching
 
 ## Recent Changes
-- **October 15, 2025 (Latest)**: Enhanced Curriculum Specialist Agent
+- **November 5, 2025 (Latest)**: Official NESA Curriculum Integration
+  - **MAJOR UPGRADE**: System now uses 100% authentic NESA curriculum materials
+  - Parsed 3 official NESA DOCX files (Syllabus Support, Full Syllabus, Sample Assessments)
+  - Extracted official content for all 8 Stage 4 focus areas:
+    * Key ideas (6-10 per topic)
+    * NESA-recommended investigations (3-10 per topic)
+    * Background knowledge requirements (3-8 per topic)
+    * Teaching focus and depth study suggestions
+  - Enhanced Curriculum Specialist to retrieve and display official NESA content
+  - Updated Learning Specialist to use authentic NESA investigations in lesson generation
+  - Added frontend display of key ideas, investigations, and background knowledge
+  - All 8 topics verified: SC4-OTU-01, SC4-FRC-01, SC4-LW-02, SC4-SOL-01, SC4-LW-01, SC4-PRT-01, SC4-CHG-01, SC4-DAT-01
+  - Replaced manually-created content with official curriculum materials
+  
+- **October 15, 2025**: Enhanced Curriculum Specialist Agent
   - Implemented comprehensive outcome mapping for all 8 Stage 4 focus areas
   - Added learning objectives generation for each topic
   - Included common misconceptions database to address student errors
