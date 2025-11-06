@@ -10,6 +10,7 @@ from src.tools.resource_manager import (
 )
 from src.tools.gemini_helper import generate_explanation
 from src.data.nesa_official_content import get_nesa_teaching_content
+from src.tools.textbook_manager import get_textbook_manager
 
 
 class LearningSpecialist(GeminiAgent):
@@ -61,6 +62,7 @@ Remember: You're not just delivering content - you're sparking curiosity and bui
         
         super().__init__("Learning Specialist", system_instruction)
         self.resource_catalog = load_resource_catalog()
+        self.textbook_manager = get_textbook_manager()
     
     def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         topic = request.get('topic', '')
@@ -111,6 +113,9 @@ Remember: You're Nova, their enthusiastic learning buddy, not a formal teacher!"
         
         lesson_content = self.generate_response(prompt)
         
+        # Get textbook recommendations
+        textbook_recommendations = self.textbook_manager.search_textbooks(topic)
+        
         # Format all resources for display
         all_resources = []
         all_resources.extend([format_resource_for_display(v) for v in youtube_videos[:3]])
@@ -123,6 +128,7 @@ Remember: You're Nova, their enthusiastic learning buddy, not a formal teacher!"
             'resources': all_resources,
             'youtube_videos': [format_resource_for_display(v) for v in youtube_videos[:5]],
             'simulations': [format_resource_for_display(s) for s in simulations[:3]],
+            'textbook_recommendations': textbook_recommendations,
             'next_action': 'present_to_student'
         }
     

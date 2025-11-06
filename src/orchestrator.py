@@ -49,7 +49,8 @@ class AgentOrchestrator:
             'misconceptions': curriculum_response.get('misconceptions', []),
             'key_ideas': curriculum_response.get('key_ideas', []),
             'investigations': curriculum_response.get('investigations', []),
-            'background_knowledge': curriculum_response.get('background_knowledge', [])
+            'background_knowledge': curriculum_response.get('background_knowledge', []),
+            'textbook_recommendations': curriculum_response.get('textbook_recommendations', [])
         }
     
     def handle_learning_request(self, query: str, student_id: str) -> Dict[str, Any]:
@@ -77,7 +78,8 @@ class AgentOrchestrator:
             'lesson': learning_response.get('lesson_content', ''),
             'resources': learning_response.get('resources', []),
             'youtube_videos': learning_response.get('youtube_videos', []),
-            'simulations': learning_response.get('simulations', [])
+            'simulations': learning_response.get('simulations', []),
+            'textbook_recommendations': learning_response.get('textbook_recommendations', [])
         }
     
     def handle_assessment_request(self, topic: str, student_id: str) -> Dict[str, Any]:

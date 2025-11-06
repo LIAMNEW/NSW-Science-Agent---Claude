@@ -85,6 +85,9 @@ function handleResponse(data, queryType) {
             addMessage('Learning Specialist (Nova)', data.lesson);
         }
         
+        // Display textbook recommendations
+        displayTextbooks(data.textbook_recommendations, 'Learning Specialist (Nova)');
+        
         // Display YouTube videos
         if (data.youtube_videos && data.youtube_videos.length > 0) {
             let videosHtml = '<strong>📺 YouTube Learning Videos:</strong><br>';
@@ -222,6 +225,35 @@ function displayCurriculumInfo(data) {
     
     curriculumHtml += '</div>';
     addMessage('Curriculum Specialist', curriculumHtml);
+    
+    // Display textbook recommendations if available
+    displayTextbooks(data.textbook_recommendations, 'Curriculum Specialist');
+}
+
+function displayTextbooks(textbooks, agentName) {
+    if (!textbooks || textbooks.length === 0) return;
+    
+    let textbooksHtml = '<div class="textbooks-section"><strong>📚 Free OpenStax Textbooks:</strong><br>';
+    textbooksHtml += '<em>High-quality, open-source science textbooks aligned with your curriculum</em><br><br>';
+    
+    textbooks.forEach(book => {
+        textbooksHtml += `<div class="textbook-item">
+            <div class="textbook-header">
+                <strong>📖 ${book.title}</strong>
+                ${book.license ? `<span class="license-badge">${book.license}</span>` : ''}
+            </div>
+            <p class="textbook-description">${book.description}</p>
+            ${book.chapters ? `<p class="textbook-chapters">📑 ${book.chapters}</p>` : ''}
+            ${book.focus_area ? `<p class="focus-area">🎯 NESA Focus: ${book.focus_area}</p>` : ''}
+            <div class="textbook-links">
+                <a href="${book.url}" target="_blank" class="textbook-link primary">📱 Read Online</a>
+                <a href="${book.pdf_url}" target="_blank" class="textbook-link secondary">📥 Download PDF</a>
+            </div>
+        </div>`;
+    });
+    
+    textbooksHtml += '</div>';
+    addMessage(agentName, textbooksHtml);
 }
 
 document.getElementById('queryInput').addEventListener('keypress', function(e) {

@@ -4,6 +4,7 @@ from src.config import NESA_CURRICULUM_UNITS, WORKING_SCIENTIFICALLY_SKILLS
 from src.tools.resource_manager import load_resource_catalog, find_resources_by_unit, find_resources_by_query
 from src.tools.utils import detect_outcomes
 from src.data.nesa_official_content import get_nesa_teaching_content, get_key_ideas_for_topic, get_investigations_for_topic
+from src.tools.textbook_manager import get_textbook_manager
 
 
 class CurriculumSpecialist(BaseAgent):
@@ -246,7 +247,7 @@ Your role is to provide comprehensive curriculum guidance including:
 2. Provide clear learning objectives for the topic
 3. Identify common misconceptions students face
 4. Suggest differentiation strategies
-5. Connect to relevant educational resources
+5. Connect to relevant educational resources and free textbooks
 6. Guide students toward inquiry-based learning
 
 You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing scientific thinking alongside content knowledge."""
@@ -255,6 +256,7 @@ You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing sc
         self.curriculum_data = NESA_CURRICULUM_UNITS
         self.student_progress = {}
         self.resource_catalog = load_resource_catalog()
+        self.textbook_manager = get_textbook_manager()
     
     def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         student_query = request.get('query', '')
@@ -280,6 +282,9 @@ You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing sc
         # Find matching resources
         available_resources = find_resources_by_query(student_query, self.resource_catalog)
         
+        # Get textbook recommendations
+        textbook_recommendations = self.textbook_manager.search_textbooks(student_query)
+        
         # Build enhanced response with official NESA content
         response_data = {
             'agent': self.agent_name,
@@ -294,6 +299,7 @@ You have deep knowledge of all 8 Stage 4 focus areas and emphasize developing sc
             'investigations': investigations,
             'background_knowledge': background_knowledge,
             'available_resources': available_resources[:5],
+            'textbook_recommendations': textbook_recommendations,
             'next_action': 'route_to_learning_specialist'
         }
         

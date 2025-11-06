@@ -499,3 +499,122 @@ header h1 {
     color: #666;
     font-size: 0.9em;
 }
+
+/* Textbook Recommendations Styling */
+.textbooks-section {
+    margin: 15px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
+    border-radius: 10px;
+}
+
+.textbooks-section strong {
+    color: #667eea !important;
+    font-size: 1.1em;
+}
+
+.textbooks-section em {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.textbook-item {
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.textbook-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.textbook-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.textbook-header strong {
+    color: #667eea !important;
+    font-size: 1.15em;
+}
+
+.license-badge {
+    background: #4caf50;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+.textbook-description {
+    color: #555;
+    margin: 8px 0;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+
+.textbook-chapters {
+    color: #666;
+    font-size: 0.9em;
+    margin: 6px 0;
+    font-style: italic;
+}
+
+.focus-area {
+    background: #fff3e0;
+    color: #e65100;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    margin: 8px 0;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.textbook-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.textbook-link {
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.textbook-link.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.textbook-link.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.textbook-link.secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.textbook-link.secondary:hover {
+    background: #667eea;
+    color: white;
+}
