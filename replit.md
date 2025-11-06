@@ -48,7 +48,18 @@ Current implementation provides:
 - NESA outcome detection and resource matching
 
 ## Recent Changes
-- **November 5, 2025 (Latest)**: Added Agent Selection for Individual Responses
+- **November 6, 2025 (Latest)**: Integrated OpenStax Free Textbook Recommendations
+  - **NEW FEATURE**: Added comprehensive OpenStax textbook catalog mapped to all 8 NSW Stage 4 topics
+  - Created textbook_manager.py with smart search algorithm matching queries to relevant free textbooks
+  - Integrated textbook recommendations into Curriculum Specialist, Learning Specialist, and Support Specialist
+  - Added frontend UI components to display textbooks with direct "Read Online" and "Download PDF" links
+  - All textbooks include proper CC BY 4.0 license attribution for educational use
+  - Catalog includes 6 high-quality OpenStax books (Physics, Biology, Chemistry, Astronomy, Middle School Science)
+  - Each textbook mapped to specific NSW focus areas with recommended chapter references
+  - Testing verified: Agents successfully return 2+ textbook recommendations per topic query
+  - Students now have access to free, professional-quality science textbooks alongside AI tutoring
+  
+- **November 5, 2025**: Added Agent Selection for Individual Responses
   - **USER-REQUESTED**: Implemented agent selection dropdown to prevent multiple agents responding simultaneously
   - Added 4 clear options: Curriculum Info, Interactive Lesson (Nova), Learning Buddy Chat (Sage), Take a Quiz
   - Created separate orchestrator handlers for curriculum-only vs learning-only requests
