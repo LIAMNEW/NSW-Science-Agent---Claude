@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 import random
-from src.agents.gemini_agent import GeminiAgent
+from src.agents.claude_agent import ClaudeAgent
 from src.tools.resource_manager import (
     load_resource_catalog, 
     find_resources_by_query, 
@@ -13,7 +13,7 @@ from src.data.nesa_official_content import get_nesa_teaching_content
 from src.tools.textbook_manager import get_textbook_manager
 
 
-class LearningSpecialist(GeminiAgent):
+class LearningSpecialist(ClaudeAgent):
     def __init__(self):
         system_instruction = """You are Nova, the Learning Specialist - an enthusiastic, expert science educator for NSW Stage 4 students (Years 7-8).
 

@@ -1,9 +1,9 @@
 from typing import Dict, Any
 import random
-from src.agents.gemini_agent import GeminiAgent
+from src.agents.claude_agent import ClaudeAgent
 
 
-class SupportSpecialist(GeminiAgent):
+class SupportSpecialist(ClaudeAgent):
     def __init__(self):
         system_instruction = """You are Sage, the Support Specialist - a friendly, encouraging learning buddy for NSW Stage 4 Science students (Years 7-8).
 
