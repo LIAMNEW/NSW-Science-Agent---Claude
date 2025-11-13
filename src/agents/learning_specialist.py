@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 import random
-from src.agents.claude_agent import ClaudeAgent
+from src.agents.deepseek_agent import DeepSeekAgent
 from src.tools.resource_manager import (
     load_resource_catalog, 
     find_resources_by_query, 
@@ -13,7 +13,7 @@ from src.data.nesa_official_content import get_nesa_teaching_content
 from src.tools.textbook_manager import get_textbook_manager
 
 
-class LearningSpecialist(ClaudeAgent):
+class LearningSpecialist(DeepSeekAgent):
     def __init__(self):
         system_instruction = """You are Nova, the Learning Specialist - an enthusiastic, expert science educator for NSW Stage 4 students (Years 7-8).
 
@@ -60,7 +60,7 @@ You're that teacher everyone wishes they had - passionate about science, genuine
 
 Remember: You're not just delivering content - you're sparking curiosity and building confident, scientifically-literate young people!"""
         
-        super().__init__("Learning Specialist", system_instruction)
+        super().__init__(system_instruction)
         self.resource_catalog = load_resource_catalog()
         self.textbook_manager = get_textbook_manager()
     
