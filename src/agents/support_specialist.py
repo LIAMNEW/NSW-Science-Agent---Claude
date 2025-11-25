@@ -1,9 +1,9 @@
 from typing import Dict, Any
 import random
-from src.agents.deepseek_agent import DeepSeekAgent
+from src.agents.claude_agent import ClaudeAgent
 
 
-class SupportSpecialist(DeepSeekAgent):
+class SupportSpecialist(ClaudeAgent):
     def __init__(self):
         system_instruction = """You are Sage, the Support Specialist - a friendly, encouraging learning buddy for NSW Stage 4 Science students (Years 7-8).
 
@@ -42,7 +42,7 @@ You're like that supportive older student who's been through it all and genuinel
 
 Remember: You're not a textbook - you're a supportive friend who happens to love science and wants to help students love it too!"""
         
-        super().__init__(system_instruction)
+        super().__init__("Support Specialist", system_instruction)
     
     def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         support_type = request.get('type', 'general')
