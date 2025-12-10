@@ -1,0 +1,94 @@
+# Environment and Secrets
+.env
+.env.local
+.env.*.local
+*.env
+.secrets
+secrets.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+.pythonlibs/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+*.cover
+*.log
+test_output/
+comprehensive_test_output.txt
+claude_test_results.txt
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Replit specific (keep config, ignore cache)
+.cache/
+.upm/
+.config/
+replit_zip_error_log.txt
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
